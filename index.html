@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>营销奖励计算器</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .calculator {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+        .result h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            background-color: #eee;
+            cursor: pointer;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+        }
+        .tab.active {
+            background-color: white;
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>BMF营销奖励计算器</h1>
+    
+    <div class="tabs">
+        <div class="tab active" onclick="openTab(event, 'firstExplosion')">首爆开单奖</div>
+        <div class="tab" onclick="openTab(event, 'stageAccumulate')">阶段累计奖</div>
+        <div class="tab" onclick="openTab(event, 'customerWelfare')">客户福利奖</div>
+    </div>
+    
+    <div id="firstExplosion" class="tab-content active">
+        <div class="calculator">
+            <h2>首爆开单奖计算</h2>
+            <p>营销人员推荐客户完成入金，每5万美金奖励人民币1000元。未满5万美元部分不额外计算奖励。</p>
+            
+            <div class="form-group">
+                <label for="firstExplosionAmount">入金金额（万美元）:</label>
+                <input type="number" id="firstExplosionAmount" step="0.01" min="0">
+            </div>
+            
+            <button onclick="calculateFirstExplosion()">计算奖励</button>
+            
+            <div id="firstExplosionResult" class="result" style="display: none;">
+                <h3>计算结果</h3>
+                <p id="firstExplosionOutput"></p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="stageAccumulate" class="tab-content">
+        <div class="calculator">
+            <h2>阶段累计奖计算</h2>
+            <p>根据累计入金量按阶梯比例计算奖励</p>
+            
+            <table>
+                <tr>
+                    <th>方案阶段客户入金量（万美元）</th>
+                    <th>提奖比例</th>
+                </tr>
+                <tr>
+                    <td>0-10</td>
+                    <td>0.5%</td>
+                </tr>
+                <tr>
+                    <td>10-50</td>
+                    <td>1%</td>
+                </tr>
+                <tr>
+                    <td>>50</td>
+                    <td>2%</td>
+                </tr>
+            </table>
+            
+            <div class="form-group">
+                <label for="stageAccumulateAmount">累计入金金额（万美元）:</label>
+                <input type="number" id="stageAccumulateAmount" step="0.01" min="0">
+            </div>
+            
+            <button onclick="calculateStageAccumulate()">计算奖励</button>
+            
+            <div id="stageAccumulateResult" class="result" style="display: none;">
+                <h3>计算结果</h3>
+                <p id="stageAccumulateOutput"></p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="customerWelfare" class="tab-content">
+        <div class="calculator">
+            <h2>客户福利奖计算</h2>
+            <p>单个新客户在方案执行期间个人账户累计入金≥50万美元，额外奖励该客户入金额的0.5%。</p>
+            
+            <div class="form-group">
+                <label for="customerWelfareAmount">客户累计入金金额（万美元）:</label>
+                <input type="number" id="customerWelfareAmount" step="0.01" min="0">
+            </div>
+            
+            <button onclick="calculateCustomerWelfare()">计算奖励</button>
+            
+            <div id="customerWelfareResult" class="result" style="display: none;">
+                <h3>计算结果</h3>
+                <p id="customerWelfareOutput"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 修复的选项卡切换函数
+        function openTab(evt, tabName) {
+            // 隐藏所有内容
+            var tabContents = document.getElementsByClassName("tab-content");
+            for (var i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove("active");
+            }
+            
+            // 取消所有标签的活动状态
+            var tabs = document.getElementsByClassName("tab");
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove("active");
+            }
+            
+            // 显示当前标签内容并激活标签
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+        
+        // 修复的首爆开单奖计算函数
+        function calculateFirstExplosion() {
+            var amountInput = document.getElementById("firstExplosionAmount");
+            var amount = parseFloat(amountInput.value);
+            
+            if (isNaN(amount) || amount < 0) {
+                alert("请输入有效的入金金额");
+                amountInput.focus();
+                return;
+            }
+            
+            // 转换为美元
+            var usdAmount = amount * 10000;
+            // 计算5万美元的倍数
+            var multiple = Math.floor(usdAmount / 50000);
+            var reward = multiple * 1000;
+            
+            var resultDiv = document.getElementById("firstExplosionResult");
+            var output = document.getElementById("firstExplosionOutput");
+            
+            output.innerHTML = `入金金额: ${amount.toFixed(2)}万美元<br>
+                               5万美元的倍数: ${multiple}个<br>
+                               奖励金额: ${reward.toFixed(2)}元人民币`;
+            
+            resultDiv.style.display = "block";
+        }
+        
+        // 修复的阶段累计奖计算函数
+        function calculateStageAccumulate() {
+            var amountInput = document.getElementById("stageAccumulateAmount");
+            var amount = parseFloat(amountInput.value);
+            
+            if (isNaN(amount) || amount < 0) {
+                alert("请输入有效的入金金额");
+                amountInput.focus();
+                return;
+            }
+            
+            var reward = 0;
+            var explanation = "";
+            
+            if (amount > 50) {
+                reward += 10 * 0.005; // 0-10万部分
+                reward += 40 * 0.01;  // 10-50万部分
+                reward += (amount - 50) * 0.02; // >50万部分
+                
+                explanation = `提奖 = 10×0.5% + 40×1% + ${(amount-50).toFixed(2)}×2% = ${(10*0.005).toFixed(2)} + ${(40*0.01).toFixed(2)} + ${((amount-50)*0.02).toFixed(2)} = ${reward.toFixed(2)}万美元`;
+            } else if (amount > 10) {
+                reward += 10 * 0.005; // 0-10万部分
+                reward += (amount - 10) * 0.01; // 10-50万部分
+                
+                explanation = `提奖 = 10×0.5% + ${(amount-10).toFixed(2)}×1% = ${(10*0.005).toFixed(2)} + ${((amount-10)*0.01).toFixed(2)} = ${reward.toFixed(2)}万美元`;
+            } else {
+                reward += amount * 0.005; // 0-10万部分
+                
+                explanation = `提奖 = ${amount.toFixed(2)}×0.5% = ${reward.toFixed(2)}万美元`;
+            }
+            
+            var cnyReward = reward * 10000 * 7.3; // 假设汇率为7.3
+            
+            var resultDiv = document.getElementById("stageAccumulateResult");
+            var output = document.getElementById("stageAccumulateOutput");
+            
+            output.innerHTML = `累计入金金额: ${amount.toFixed(2)}万美元<br>
+                               ${explanation}<br>
+                               奖励金额: ${reward.toFixed(4)}万美元 ≈ ${cnyReward.toFixed(2)}元人民币`;
+            
+            resultDiv.style.display = "block";
+        }
+        
+        // 修复的客户福利奖计算函数
+        function calculateCustomerWelfare() {
+            var amountInput = document.getElementById("customerWelfareAmount");
+            var amount = parseFloat(amountInput.value);
+            
+            if (isNaN(amount) || amount < 0) {
+                alert("请输入有效的入金金额");
+                amountInput.focus();
+                return;
+            }
+            
+            var reward = 0;
+            var message = "";
+            
+            if (amount >= 50) {
+                reward = amount * 0.005;
+                message = `客户入金金额达到奖励标准，额外奖励: ${reward.toFixed(2)}万美元`;
+            } else {
+                message = "客户入金金额未达到50万美元标准，无额外奖励";
+            }
+            
+            var resultDiv = document.getElementById("customerWelfareResult");
+            var output = document.getElementById("customerWelfareOutput");
+            
+            output.innerHTML = `客户累计入金金额: ${amount.toFixed(2)}万美元<br>
+                               ${message}`;
+            
+            resultDiv.style.display = "block";
+        }
+    </script>
+</body>
+</html>
